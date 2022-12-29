@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_toonflix/screens/detail_screen.dart';
 
-class Webtoon extends StatelessWidget {
+class DetailScreen extends StatelessWidget {
   final String thumb, title, id;
 
-  const Webtoon({
+  const DetailScreen({
     super.key,
     required this.thumb,
     required this.title,
@@ -13,23 +12,24 @@ class Webtoon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DetailScreen(
-              thumb: thumb,
-              title: title,
-              id: id,
-            ),
-            fullscreenDialog: true,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
           ),
-        );
-      },
-      child: Column(
-        children: [
-          Hero(
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.green,
+      ),
+      body: Column(children: [
+        const SizedBox(
+          height: 50,
+        ),
+        Center(
+          child: Hero(
             tag: id,
             child: Container(
               width: 250,
@@ -45,18 +45,8 @@ class Webtoon extends StatelessWidget {
               child: Image.network(thumb),
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 }
