@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_toonflix/models/webtoon_detail_model.dart';
 import 'package:flutter_toonflix/models/webtoon_episode_model.dart';
 import 'package:flutter_toonflix/services/api_service.dart';
+import 'package:flutter_toonflix/widgets/episode_widget.dart';
 
 class DetailScreen extends StatefulWidget {
   final String thumb, title, id;
@@ -42,67 +43,87 @@ class _DetailScreenState extends State<DetailScreen> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
       ),
-      body: Column(
-        children: [
-          const SizedBox(
-            height: 50,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 40,
+            vertical: 50,
           ),
-          Center(
-            child: Hero(
-              tag: widget.id,
-              child: Container(
-                width: 250,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                          blurRadius: 15,
-                          offset: const Offset(8, 8),
-                          color: Colors.black.withOpacity(0.5))
-                    ]),
-                clipBehavior: Clip.hardEdge,
-                child: Image.network(widget.thumb),
+          child: Column(
+            children: [
+              Center(
+                child: Hero(
+                  tag: widget.id,
+                  child: Container(
+                    width: 250,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: 15,
+                              offset: const Offset(8, 8),
+                              color: Colors.black.withOpacity(0.5))
+                        ]),
+                    clipBehavior: Clip.hardEdge,
+                    child: Image.network(widget.thumb),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          FutureBuilder(
-            future: details,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 48,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(
+                height: 30,
+              ),
+              FutureBuilder(
+                future: details,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          snapshot.data!.about,
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+                        Text(
+                          '${snapshot.data!.genre} / ${snapshot.data!.age}',
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        )
+                      ],
+                    );
+                  } else {
+                    return const Text('🫥');
+                  }
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              FutureBuilder(
+                future: episodes,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container();
+                  }
+                  return Column(
                     children: [
-                      Text(
-                        snapshot.data!.about,
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        '${snapshot.data!.genre} / ${snapshot.data!.age}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                        ),
-                      )
+                      for (var episode in snapshot.data!)
+                        EpisodeButton(
+                          episode: episode,
+                          webtoonId: widget.id,
+                        )
                     ],
-                  ),
-                );
-              } else {
-                return const Text('🫥');
-              }
-            },
-          )
-        ],
+                  );
+                },
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
